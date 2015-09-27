@@ -114,7 +114,7 @@ describe Locomotive::ContentEntry do
       end
 
       it 'is not translated by default in the other locale' do
-        @content_entry._slug.should be_nil # French
+        @content_entry._slug_translations['fr'].should be_nil # French
       end
 
     end
@@ -176,7 +176,7 @@ describe Locomotive::ContentEntry do
       @content_type.update_attribute :order_by, '_position'
 
       %w(first second third).each_with_index do |item, index|
-        content = build_content_entry(title: item.to_s, _position: index, published_at: (index + 1).days.ago, visible: true)
+        content = build_content_entry(title: item.to_s, _position: index, published_at: (index + 2).days.ago, visible: true)
         content.save!
         instance_variable_set "@#{item}", content
       end

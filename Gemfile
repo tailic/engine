@@ -14,12 +14,14 @@ end
 # The rest of the dependencies are for use when in the locomotive development / test environments
 
 group :test, :development do
+
+  gem 'test-unit'
   gem 'rspec-rails', '~> 2.13.0' # In order to have rspec tasks and generators
   gem 'rspec-cells', '0.1.10'
 end
 
 group :development do
-  # gem 'custom_fields', path: '../gems/custom_fields' # for Developers
+  # gem 'custom_fields', path: '~/Documents/LocomotiveCMS/gems/custom_fields' # for Developers
   # gem 'custom_fields', github: 'locomotivecms/custom_fields'
   # gem 'custom_fields', git: 'git://github.com/locomotivecms/custom_fields.git', branch: '2.0.0.rc' # Branch on Github
 
@@ -29,6 +31,8 @@ group :development do
   # gem 'locomotivecms_solid', path: '../gems/solid' # for Developers
 
   # gem 'carrierwave-mongoid', git: 'git://github.com/locomotivecms/carrierwave-mongoid.git'
+
+  gem 'eventmachine', '~> 1.0.4'
 
   gem 'thor'
   gem 'github_api'
@@ -42,8 +46,8 @@ group :test do
 
   gem 'cucumber-rails', require: false
 
-  # gem 'autotest', platforms: :mri
-  # gem 'ZenTest', platforms: :mri
+  gem 'autotest', platforms: :mri
+  gem 'ZenTest', platforms: :mri
 
   gem 'poltergeist',        '~> 1.1.0'
   gem 'shoulda-matchers',   '~> 1.5.2'

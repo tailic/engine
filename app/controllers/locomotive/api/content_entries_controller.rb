@@ -10,8 +10,8 @@ module Locomotive
       })
 
       def index
-        @content_entries = @content_entries.order_by([get_content_type.order_by_definition])
-        respond_with @content_entries
+        @content_entries = service.all(params.slice(:page, :per_page, :order_by, :where))
+        respond_with(@content_entries)
       end
 
       def show
@@ -35,10 +35,23 @@ module Locomotive
         respond_with @content_entry, location: main_app.locomotive_api_content_entries_url(@content_type.slug)
       end
 
+      def destroy_all
+        service.destroy_all
+        respond_to do |format|
+          format.html { render text: true }
+          format.json { render json: { success: true } }
+          format.xml  { render xml: { success: true } }
+        end
+      end
+
       protected
 
       def get_content_type
         @content_type ||= current_site.content_types.by_id_or_slug(params[:slug]).first
+      end
+
+      def service
+        @service ||= Locomotive::ContentEntryService.new(get_content_type)
       end
 
     end

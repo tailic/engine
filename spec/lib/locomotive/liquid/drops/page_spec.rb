@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Locomotive::Liquid::Drops::Page do
 
   before(:each) do
-    @site  = FactoryGirl.build(:site)
-    @home  = FactoryGirl.build(:page, site: @site, meta_keywords: 'Libidinous, Angsty', meta_description: "Quite the combination.")
+    @site   = FactoryGirl.build(:site)
+    @home   = FactoryGirl.build(:page, site: @site, meta_keywords: 'Libidinous, Angsty', meta_description: "Quite the combination.")
   end
 
   context '#rendering tree' do
@@ -53,6 +53,19 @@ describe Locomotive::Liquid::Drops::Page do
 
   end
 
+  context '#layout' do
+    before(:each) do
+      @layout = FactoryGirl.build(:page, title: 'Simple playout', is_layout: true)
+      @home.layout = @layout
+    end
+
+    it 'renders title of parent page' do
+      content = render_template '{{ page.layout.title }}', { 'page' => @home }
+      content.should == "Simple playout"
+    end
+
+  end
+
   context '#breadcrumbs' do
     before(:each) do
       @sub_page = FactoryGirl.build(:sub_page, meta_keywords: 'Sub Libidinous, Angsty', meta_description: "Sub Quite the combination.")
@@ -77,6 +90,7 @@ describe Locomotive::Liquid::Drops::Page do
       entry = Locomotive::Liquid::Drops::ContentEntry.new(mock('entry', _label: 'Locomotive rocks !'))
 
       render_template('{{ page.title }}', 'page' => templatized, 'entry' => entry).should == 'Locomotive rocks !'
+      render_template('{{ page.original_title }}', 'page' => templatized, 'entry' => entry).should == 'Lorem ipsum template'
     end
 
   end
@@ -88,11 +102,12 @@ describe Locomotive::Liquid::Drops::Page do
     end
 
     it 'renders the content instance slug instead for a templatized page' do
-      templatized = FactoryGirl.build(:page, title: 'Lorem ipsum template', templatized: true)
+      templatized = FactoryGirl.build(:page, title: 'Lorem ipsum template', slug: 'content-type-template', templatized: true)
 
       entry = Locomotive::Liquid::Drops::ContentEntry.new(mock('entry', _slug: 'my_entry'))
 
       render_template('{{ page.slug }}', 'page' => templatized, 'entry' => entry).should == 'my_entry'
+      render_template('{{ page.original_slug }}', 'page' => templatized, 'entry' => entry).should == 'content-type-template'
     end
 
   end
@@ -102,12 +117,12 @@ describe Locomotive::Liquid::Drops::Page do
     before(:each) do
       @site = FactoryGirl.create(:site)
       @home = @site.pages.root.first
-      @home.update_attributes raw_template: "{% block body %}{% editable_short_text 'body' %}Lorem ipsum{% endeditable_short_text %}{% endblock %}"
+      @home.update_attributes raw_template: "{% editable_text title %}Hello world{% endeditable_text %}{% block body %}{% editable_short_text 'message' %}Lorem ipsum{% endeditable_short_text %}{% endblock %}"
       @home.editable_elements.first.content = 'Lorem ipsum'
     end
 
     it 'renders the text of the editable field' do
-      render_template('{{ home.body }}').should == 'Lorem ipsum'
+      render_template('{{ home.editable_elements.body.message }}').should == 'Lorem ipsum'
     end
 
   end
