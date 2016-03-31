@@ -50,6 +50,11 @@ class Locomotive.Views.Shared.Fields.HasManyView extends Backbone.View
     @$('.empty').hide()
     entry_html = $(@entry_template()(label: entry.get('_label')))
     entry_html.data('data-entry-id', entry.id)
+    if src = entry.get('file')
+      image = new Image()
+      image.src = src
+      image.height = '32'
+      entry_html.append(image)
     @$('> ul').append(entry_html)
 
   make_entries_sortable: ->
@@ -119,8 +124,3 @@ class Locomotive.Views.Shared.Fields.HasManyView extends Backbone.View
     entry_html  = $(element).closest('li')
     id          = $(entry_html).data('data-entry-id')
     @collection.get(id)
-
-
-
-
-
